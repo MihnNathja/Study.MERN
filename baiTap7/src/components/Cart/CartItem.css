@@ -1,0 +1,15 @@
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+
+.cart-item input[type="number"] {
+  width: 50px;
+  margin: 0 8px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

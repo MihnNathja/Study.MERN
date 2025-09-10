@@ -1,0 +1,31 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  width: 200px;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+  background-color: white;
+  margin: 8px;
+}
+
+.card-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.card-price {
+  font-weight: bold;
+  color: #e91e63;
+  margin-bottom: 8px;
+}
+
+.card-extra {
+  margin-top: 8px;
+}
