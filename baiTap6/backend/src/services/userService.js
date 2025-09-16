@@ -50,6 +50,7 @@ const loginService = async (email1, password) => {
       } else {
         //create an access token
         const payload = {
+          id: user._id,
           email: user.email,
           name: user.name,
         };

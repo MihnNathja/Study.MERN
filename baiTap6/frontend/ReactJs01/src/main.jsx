@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-//import "./styles/global.css";
+// import "./styles/global.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RegisterPage from "./pages/register.jsx";
 import UserPage from "./pages/user.jsx";
 import HomePage from "./pages/home.jsx";
 import LoginPage from "./pages/login.jsx";
 import { AuthWrapper } from "./components/context/auth.context.jsx";
-import './index.css'  
-import './App.css'    
-
+import ProductDetailPage from "../src/features/product/pages/ProductDetailPage.jsx"; 
+import './App.css';
+import './index.css'
 
 const router = createBrowserRouter([
   {
@@ -21,19 +21,20 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
-
       {
         path: "user",
         element: <UserPage />,
       },
+      {
+        path: "products/:id",   
+        element: <ProductDetailPage />,
+      },
     ],
   },
-
   {
     path: "register",
     element: <RegisterPage />,
   },
-
   {
     path: "login",
     element: <LoginPage />,

@@ -1,6 +1,6 @@
 import axios from "./axios.customize";
 
-const createUserApi = (name, email, password) => {
+export const createUserApi = (name, email, password) => {
   const URL_API = "/v1/api/register";
 
   const data = {
@@ -12,7 +12,7 @@ const createUserApi = (name, email, password) => {
   return axios.post(URL_API, data);
 };
 
-const loginApi = (email, password) => {
+export const loginApi = (email, password) => {
   
   const URL_API = "/v1/api/login";
   
@@ -24,13 +24,13 @@ const loginApi = (email, password) => {
   return axios.post(URL_API, data);
 };
 
-const getUserApi = () => {
+export const getUserApi = () => {
   const URL_API = "/v1/api/user";
 
   return axios.get(URL_API);
 };
 
-const getProducts = (category, page, limit = 10) => {
+export const getProducts = (category, page, limit = 10) => {
   const URL_API = "/v1/api/products";
   return axios.get(URL_API, {
     params: {
@@ -41,10 +41,31 @@ const getProducts = (category, page, limit = 10) => {
   });
 };
 
-const searchProducts = async (params) => {
+export const searchProducts = async (params) => {
   const URL_API = "/v1/api/products/search";
   const res = await axios.get(URL_API, { params });
   return res; 
 };
 
-export { createUserApi, loginApi, getUserApi, getProducts, searchProducts };
+// Để tạm
+
+export const fetchFavorites = async () => {
+  const res = await axios.get("/v1/api/favorites");
+  return res.data.data; 
+};
+
+export const addFavorite = async (productId) => {
+  await axios.post(`/v1/api/favorites/${productId}`, );
+};
+
+export const removeFavorite = async (productId) => {
+  await axios.delete(`/v1/api/favorites/${productId}`);
+};
+
+export const getProductDetailApi = async (id) => {
+  const res = await axios.get(`/v1/api/products/${id}`);
+  console.log(res);
+  return res;
+};
+
+

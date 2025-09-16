@@ -1,4 +1,4 @@
-const Product = require("../models/Product");
+const Product = require("../models/product");
 const esClient = require("../../elsasticsearch");
 
 const getProductsService = async (category, page, limit) => {
@@ -186,11 +186,18 @@ const deleteProductService = async (id) => {
   return product;
 };
 
+const getProductByIdService = async(id) => {
+  const product = Product.findById(id);
+  if (!product) throw new Error("Product not found");
+  return product;
+}
+
 
 module.exports = {
     getProductsService,
     createProductService,
     searchProductsService,
     updateProductService,
-    deleteProductService
+    deleteProductService,
+    getProductByIdService
 };

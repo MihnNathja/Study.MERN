@@ -1,6 +1,6 @@
 import {CrownOutlined} from '@ant-design/icons';
 import {Result} from "antd";
-import ProductList from '../components/productList';
+import ProductList from '../features/product/components/ProductList';
 
 const HomePage = () => {
     return (
