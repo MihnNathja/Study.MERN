@@ -1,6 +1,6 @@
 // hooks/useProductDetail.js
 import { useEffect, useState } from "react";
-import { getProductDetail } from "../services/productService";
+import { addView, getProductDetail } from "../services/productService";
 
 export default function useProductDetail(productId) {
   const [product, setProduct] = useState(null);
@@ -8,6 +8,7 @@ export default function useProductDetail(productId) {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    console.log("ProductId trong detail: ", productId);
     if (!productId) return;
     setLoading(true);
     getProductDetail(productId)

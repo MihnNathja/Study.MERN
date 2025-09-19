@@ -2,6 +2,8 @@ import FavoriteProduct from "../models/favoriteProduct.js";
 
 export const addFavoriteService = async (userId, productId, note = null) => {
     try {
+      //console.log ("UserId: ", userId);
+      //console.log ("productId: ", productId);
       const favorite = await FavoriteProduct.findOneAndUpdate(
         { user: userId, product: productId },
         { $setOnInsert: { note } },
@@ -34,6 +36,7 @@ export const listFavoritesService = async (userId, { page = 1, limit = 10 } = {}
       .skip(skip)
       .limit(limit);
 
+      //console.log("Favorites: ", favorites);
     const total = await FavoriteProduct.countDocuments({ user: userId });
 
     return {

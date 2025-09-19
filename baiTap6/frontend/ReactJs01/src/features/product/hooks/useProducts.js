@@ -1,7 +1,7 @@
-// hooks/useProducts.js
 import { useState, useEffect, useRef, useCallback } from "react";
 import { fetchProducts } from "../services/productService";
-import { addFavorite, removeFavorite, fetchFavorites } from "../../../util/api"
+import { addFavorite, removeFavorite } from "../../../util/api";
+
 export default function useProducts(filters) {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -9,51 +9,31 @@ export default function useProducts(filters) {
   const [error, setError] = useState("");
   const [hasNext, setHasNext] = useState(true);
 
-  const [favorites, setFavorites] = useState(new Set()); // lưu danh sách favorites
-
   const pageRef = useRef(1);
   const cursorRef = useRef(null);
 
   // === FAVORITE LOGIC ===
-  const isFavorite = useCallback(
-    (productId) => favorites.has(productId),
-    [favorites]
-  );
+  const toggleFavorite = useCallback(async (productId) => {
+    try {
+      setItems((prev) =>
+        prev.map((p) =>
+          (p._id || p.id) === productId
+            ? { ...p, isFavorite: !p.isFavorite }
+            : p
+        )
+      );
 
-  const toggleFavorite = useCallback(
-    async (productId) => {
-      console.log(productId);
-      try {
-        if (favorites.has(productId)) {
-          await removeFavorite(productId);
-          setFavorites((prev) => {
-            const copy = new Set(prev);
-            copy.delete(productId);
-            return copy;
-          });
-        } else {
-          await addFavorite(productId);
-          setFavorites((prev) => new Set(prev).add(productId));
-        }
-      } catch (err) {
-        console.error("Toggle favorite error:", err);
+      // gọi API
+      const target = items.find((p) => (p._id || p.id) === productId);
+      if (target?.isFavorite) {
+        await removeFavorite(productId);
+      } else {
+        await addFavorite(productId);
       }
-    },
-    [favorites]
-  );
-
-  // Load favorites ban đầu (optional)
-  useEffect(() => {
-    const loadFavorites = async () => {
-      try {
-        const favs = await fetchFavorites();
-        setFavorites(new Set(favs.map((f) => f.product.id)));
-      } catch (err) {
-        console.error("Fetch favorites error:", err);
-      }
-    };
-    loadFavorites();
-  }, []);
+    } catch (err) {
+      console.error("Toggle favorite error:", err);
+    }
+  }, [items]);
 
   // === FETCH PRODUCTS ===
   const fetchMore = useCallback(
@@ -69,6 +49,8 @@ export default function useProducts(filters) {
           pageRef,
           filters.pageSize
         );
+
+        console.log (newData);
 
         setItems((prev) => (isFirst ? newData : prev.concat(newData)));
         setTotal(total);
@@ -111,9 +93,6 @@ export default function useProducts(filters) {
     error,
     hasNext,
     fetchMore,
-    // favorites
-    favorites,
-    isFavorite,
     toggleFavorite,
   };
 }

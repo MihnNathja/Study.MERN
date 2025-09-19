@@ -42,8 +42,10 @@ export const getProducts = (category, page, limit = 10) => {
 };
 
 export const searchProducts = async (params) => {
+  //console.log(params);
   const URL_API = "/v1/api/products/search";
   const res = await axios.get(URL_API, { params });
+  //console.log(res);
   return res; 
 };
 
@@ -51,7 +53,7 @@ export const searchProducts = async (params) => {
 
 export const fetchFavorites = async () => {
   const res = await axios.get("/v1/api/favorites");
-  return res.data.data; 
+  return res.data; 
 };
 
 export const addFavorite = async (productId) => {
@@ -67,5 +69,9 @@ export const getProductDetailApi = async (id) => {
   console.log(res);
   return res;
 };
+
+export const addViewApi = async(productId) => {
+  await axios.post(`/v1/api/products/${productId}/view`, );
+}
 
 

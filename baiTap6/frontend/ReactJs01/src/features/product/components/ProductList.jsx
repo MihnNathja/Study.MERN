@@ -38,11 +38,16 @@ export default function ProductList() {
 
       {error && <div className="p-3 rounded-xl border bg-red-50 text-red-700 text-sm">{error}</div>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map((p, idx) => (
-          <ProductCard key={(p.id || p._id || idx) + "_" + idx} p={p} isFavorite={isFavorite} toggleFavorite={toggleFavorite}/>
-        ))}
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {items.map((p, idx) => (
+        <ProductCard
+          key={(p.id || p._id || idx) + "_" + idx}
+          p={p}
+          toggleFavorite={toggleFavorite}
+        />
+      ))}
+    </div>
+
 
       <div className="flex justify-center py-2">
         <button

@@ -1,5 +1,7 @@
 const Product = require("../models/product");
 const esClient = require("../../elsasticsearch");
+const favoriteProduct = require("../models/favoriteProduct");
+const { default: mongoose } = require("mongoose");
 
 const getProductsService = async (category, page, limit) => {
   try {
@@ -50,7 +52,7 @@ const createProductService = async (data) => {
   return product;
 };
 
-const searchProductsService = async (query) => {
+const searchProductsService = async (query, userId) => {
   const {
     q,
     category,
@@ -125,11 +127,59 @@ const searchProductsService = async (query) => {
     });
 
     // 5. Map hits
-    const hits = result.hits.hits.map((hit) => ({
-      id: hit._source.uuid,
-      ...hit._source,
-      sort: hit.sort || [], // dùng đúng sort array từ ES
-    }));
+    let hits = result.hits.hits.map((hit) => {
+      const src = hit._source;
+      //console.log(src);
+
+      return {
+        id: hit._id,
+        uuid: src.uuid,
+        name: src.name,
+        price: src.price,
+        category: src.category,
+        views: src.views ?? [],
+        viewsCount: src.viewsCount ?? 0,
+
+        buyers: src.buyers ?? [],
+        buyersCount: src.buyersCount ?? 0,
+
+        commenters: src.commenters ?? [],
+        commentersCount: src.commentersCount ?? 0,
+
+        createdAt: src.createdAt ?? null,
+        sort: hit.sort || [],
+      };
+    });
+
+    // === Join với bảng FavoriteProduct + check Viewed ===
+    if (userId) {
+      const productIds = hits.map((p) => p.id);
+
+      // Favorites
+      const favorites = await favoriteProduct
+        .find({ user: userId, product: { $in: productIds } })
+        .select("product");
+
+      const favoriteSet = new Set(favorites.map((f) => f.product.toString()));
+
+      // Views
+      const viewedProducts = await Product.find({
+        _id: { $in: productIds },
+        views: userId,
+      }).select("_id");
+
+      const viewedSet = new Set(
+        viewedProducts.map((v) => v._id.toString())
+      );
+
+      // Gắn flag
+      hits = hits.map((p) => ({
+        ...p,
+        isFavorite: favoriteSet.has(p.id.toString()),
+        isViewed: viewedSet.has(p.id.toString()),
+      }));
+    }
+
     return {
       EC: 0,
       EM: "OK",
@@ -192,6 +242,60 @@ const getProductByIdService = async(id) => {
   return product;
 }
 
+/**
+ * User xem sản phẩm
+ */
+const addViewService = async (productId, userId) => {
+  const product = await Product.findById(productId);
+  if (!product) throw new Error("Product not found");
+
+  // Tăng viewsCount
+  product.viewsCount += 1;
+
+  // Nếu user chưa từng xem thì thêm vào views
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+  if (!product.views.some((u) => u.toString() === userId.toString())) {
+    product.views.push(userObjectId);
+  }
+
+  await product.save();
+  return product;
+};
+
+/**
+ * User mua sản phẩm
+ */
+const addBuyerService = async (productId, userId) => {
+  const product = await Product.findById(productId);
+
+  if (!product) throw new Error("Product not found");
+
+  if (!product.buyers.includes(userId)) {
+    product.buyers.push(userId);
+    product.buyersCount += 1; // tăng số khách mua duy nhất
+  }
+
+  await product.save();
+  return product;
+};
+
+/**
+ * User bình luận sản phẩm
+ */
+const addCommenterService = async (productId, userId) => {
+  const product = await Product.findById(productId);
+
+  if (!product) throw new Error("Product not found");
+
+  if (!product.commenters.includes(userId)) {
+    product.commenters.push(userId);
+    product.commentersCount += 1; // tăng số khách bình luận duy nhất
+  }
+
+  await product.save();
+  return product;
+};
+
 
 module.exports = {
     getProductsService,
@@ -199,5 +303,8 @@ module.exports = {
     searchProductsService,
     updateProductService,
     deleteProductService,
-    getProductByIdService
+    getProductByIdService,
+    addBuyerService,
+    addCommenterService,
+    addViewService
 };

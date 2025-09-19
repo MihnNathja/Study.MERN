@@ -25,7 +25,7 @@ const auth = (req, res, next) => {
           createdBy: "hoidanit",
         };
 
-        console.log(">>> check token:", decoded);
+        //console.log(">>> check token:", decoded);
 
         next();
       } catch (error) {

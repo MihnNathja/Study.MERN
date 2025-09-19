@@ -1,5 +1,5 @@
 // services/productService.js
-import { getProducts, searchProducts, getProductDetailApi } from "../../../util/api";
+import { getProducts, searchProducts, getProductDetailApi, addViewApi } from "../../../util/api";
 
 export async function fetchProducts(params, cursorRef, pageRef, pageSize) {
   try {
@@ -18,7 +18,8 @@ export async function fetchProducts(params, cursorRef, pageRef, pageSize) {
 
     const res = await searchProducts(query);
     if (!res || res.EC !== 0) throw new Error(res?.EM || "Không thể tải dữ liệu");
-
+    console.log(res.data);
+    
     return {
       items: res.data || [],
       total: res.total || 0,
@@ -39,6 +40,10 @@ export async function fetchProducts(params, cursorRef, pageRef, pageSize) {
 
 export const getProductDetail = async(productId) => {
   return getProductDetailApi(productId);
+}
+
+export const addView = async(productId) => {
+  return addViewApi(productId);
 }
 
 

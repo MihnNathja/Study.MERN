@@ -34,6 +34,7 @@ routerAPI.post("/products", createProduct);
 routerAPI.put("/products/:id", updateProduct);
 routerAPI.delete("/products/:id", deleteProduct);
 
+
 routerAPI.post("/favorites/:productId",addFavorite)
 routerAPI.delete("/favorites/:productId",removeFavorite)
 routerAPI.get("/favorites", listFavorites)
